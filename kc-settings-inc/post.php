@@ -1,5 +1,53 @@
 <?php
 
+/**
+ * Save post custom fields values
+ *
+ * @param int $post_id
+ *
+ */
+
+function kc_save_cfields( $post_id ) {
+	if ( isset($_POST['action']) && $_POST['action'] == 'inline-save' )
+		return $post_id;
+
+	$cfields = kc_meta( 'post' );
+
+	if ( isset($_POST['post_type']) )
+		$post_type = $_POST['post_type'];
+	$post_cfields = ( isset($post_type) ) ? $cfields[$post_type] : null;
+
+	# empty options array? abort!
+	if ( empty($post_cfields) )
+		return $post_id;
+
+	# Verify the nonce before preceding.
+	if ( !wp_verify_nonce( $_POST["{$post_type}_kc_meta_box_nonce"], '___kc_meta_box_nonce___' ) )
+		return $post_id;
+
+	# Get the post type object.
+	$post_type_obj = get_post_type_object( $post_type );
+
+	# Check if the current user has permission to edit the post.
+	if ( !current_user_can( $post_type_obj->cap->edit_post, $post_id ) )
+		return $post_id;
+
+	global $post;
+
+
+	# Loop through all of post meta box arguments.
+	foreach ( $post_cfields as $section ) {
+		# no fields? abort!
+		if ( !isset($section['fields']) || empty($section['fields']) )
+			return $post_id;
+
+		foreach ( $section['fields'] as $field ) {
+			kc_update_meta( 'post', $post_type, $post_id, $section, $field );
+		}
+	}
+}
+
+
 class kcPostSettings {
 
 	function init( $cfields ) {
@@ -73,7 +121,7 @@ class kcPostSettings {
 
 			# print the option field
 			$output .= "\t\t<td>";
-			$output .= kc_settings_field( array( 'mode' => 'cfields', 'post_id' => $object->ID, 'section' => $section, 'field' => $field ) );
+			$output .= kc_settings_field( array( 'mode' => 'post', 'object_id' => $object->ID, 'section' => $section, 'field' => $field ) );
 			$output .= "\t\t</td>\n";
 
 			$output .= "\t</tr>\n";

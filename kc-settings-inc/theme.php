@@ -74,8 +74,9 @@ class kcThemeSettings {
 			register_setting( "{$prefix}_settings", "{$prefix}_settings", array($this, 'validate') );
 
 			foreach ( $options as $section ) {
+				$section_title = ( isset($section['title']) ) ? $section['title'] : "{$prefix}-section-{$section['id']}";
 				# Add sections
-				add_settings_section( $section['id'], $section['title'], array($this, 'section_desc'), "{$prefix}_settings" );
+				add_settings_section( $section['id'], $section_title, array($this, 'section_desc'), "{$prefix}_settings" );
 				foreach ( $section['fields'] as $field ) {
 					# add fields on each sections
 					$args = array(
@@ -132,12 +133,16 @@ class kcThemeSettings {
 	# Setting field validation callback
 	function validate( $user_val ) {
 		$options = $this->group['options'];
+		$prefix = $this->group['prefix'];
 
 		# apply validation/sanitation filter(s) on the new values
+		# filter by prefix
+		$user_val = apply_filters( "kcv_settings_{$prefix}", $user_val );
+
 		$nu_val = array();
 		foreach ( $user_val as $sk => $sv ) {
 			# section filter
-			$nu_val[$sk] = apply_filters( "kc_psv_{$sk}", $sv );
+			$nu_val[$sk] = apply_filters( "kcv_setting_{$prefix}_{$sk}", $sv );
 
 			foreach ( $sv as $fk => $fv ) {
 				$type = $options[$sk]['fields'][$fk]['type'];
@@ -152,10 +157,10 @@ class kcThemeSettings {
 				}
 
 				# type-based filter
-				$fv = apply_filters( "kc_psv_type_{$type}", $fv, $sk, $type );
+				$fv = apply_filters( "kcv_setting_{$prefix}_{$type}", $fv );
 
 				# field-based filter
-				$fv = apply_filters( "kc_psv_{$sk}_{$fk}", $fv, $sk, $type );
+				$fv = apply_filters( "kcv_setting_{$prefix}_{$sk}_{$fk}", $fv );
 
 				# insert the filtered value to our new array
 				$nu_val[$sk][$fk] = $fv;
