@@ -1,9 +1,9 @@
 <?php
 
-add_filter( 'kc_term_settings', 'myterm_options' );
-function myterm_options( $groups ) {
+add_filter( 'kc_user_settings', 'my_user_options' );
+function my_user_options( $groups ) {
 	$my_group = array(
-		'post_tag'	=> array(		// taxonomy name
+		array(
 			'sample_section' => array(
 				'id'				=> 'sample_section',		// section ID for each metabox
 				'title'			=> 'Sample Options',		// section title
@@ -32,10 +32,10 @@ function myterm_options( $groups ) {
 	return $groups;
 }
 
-add_filter( 'kc_term_settings', 'myterm_options2' );
-function myterm_options2( $groups ) {
+add_filter( 'kc_user_settings', 'my_user_options2' );
+function my_user_options2( $groups ) {
 	$my_group = array(
-		'category'	=> array(
+		array(
 			'sample_section2' => array(
 				'id'				=> 'sample_section2',
 				'title'			=> 'Sample Options 2',
