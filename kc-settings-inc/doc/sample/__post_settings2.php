@@ -1,5 +1,5 @@
 <?php
-add_filter( 'kc_cfields_settings', 'mypost_options2' );
+add_filter( 'kc_post_settings', 'mypost_options2' );
 function mypost_options2( $groups ) {
 	$my_group = array(
 		'post'	=> array(		// post_type
