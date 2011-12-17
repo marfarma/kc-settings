@@ -2,7 +2,7 @@
 
 /**
  * @package KC_Settings
- * @version 2.5.1
+ * @version 2.5.2
  */
 
 
@@ -10,7 +10,7 @@
 Plugin name: KC Settings
 Plugin URI: http://kucrut.org/2010/10/kc-settings/
 Description: Easily create plugin/theme settings page, custom fields metaboxes, term meta and user meta settings.
-Version: 2.5.1
+Version: 2.5.2
 Author: Dzikri Aziz
 Author URI: http://kucrut.org/
 License: GPL v2
@@ -566,7 +566,7 @@ class kcSettings {
 	 * Lock plugin when there are other plugins/themes using it
 	 */
 	public static function _lock( $actions, $plugin_file, $plugin_data, $context ) {
-		if ( $plugin_file == self::$pdata['paths']['p_file'] && !empty(self::$data['status']['kids']) )
+		if ( $plugin_file == self::$pdata['paths']['p_file'] && !empty(self::$pdata['status']['kids']) )
 			unset( $actions['deactivate'] );
 
 		return $actions;
@@ -575,8 +575,7 @@ class kcSettings {
 
 	public static function _dev() {
 		echo '<pre>';
-		//print_r( self::get_data( 'settings', 'term', 'category', 'sample_section', 'priority' ) );
-		//print_r( get_option('kc_settings') );
+		print_r( get_option('kc_settings') );
 		echo '</pre>';
 	}
 
@@ -621,7 +620,7 @@ function kcSettings_activate() {
 		$status['kids'] = array();
 
 	$old_version = ( isset($status['version']) ) ? $status['version'] : '2.2';
-	$status['version'] = '2.5.1';
+	$status['version'] = '2.5.2';
 
 	update_option( 'kc_settings', $status );
 
